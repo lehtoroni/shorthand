@@ -2,8 +2,8 @@
 
 **Shorthand is a lightweight jQuery-like DOM manipulation library.**
 The main purpose of Shorthand is to give the developer an easy and familiar way
-to access and modify DOM content, without unnecessary bloat.
-It is very powerful when full-flexed UI libraries are too much
+to access and modify DOM content, without included unnecessary features outruled
+by newer standards. It is very powerful when full-flexed UI libraries are too much
 and good old jQuery isn't an option.
 
 ## Documentation and list of implemented features
