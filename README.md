@@ -15,6 +15,10 @@ If you wanted to e.g. migrate from jQuery, the documentation is your best friend
 - JSDoc: https://lehtoroni.github.io/shorthand/
 - You can also [see the source](./src/shorthand.js)
 
+#### ⚠️ Disclaimer
+This library is in a highly developmental stage.
+I wouldn't recommend using it in a production environment.
+
 ## Compatibility with jQuery
 Shorthand is **not** a drop-in jQuery replacement.
 It uses the `$H` handle for its operations, and doesn't support all of

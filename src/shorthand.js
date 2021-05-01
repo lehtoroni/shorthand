@@ -46,6 +46,7 @@ if (window.$H) {
         /**
          * Filter and return elements matching a CSS selector
          * @param {string} query - the CSS selector
+         * @returns {ShorthandArray} the found objects
          */
         find(query){
             const outArr = new ShorthandArray();
@@ -56,6 +57,7 @@ if (window.$H) {
         /**
          * Return the closest matching elements to these elements
          * @param {string} query - the CSS selector
+         * @returns {ShorthandArray} the closest queried objects
          */
         closest(query){
             const outArr = new ShorthandArray();
@@ -66,6 +68,7 @@ if (window.$H) {
         /**
          * Check if all of these elements match a query
          * @param {string} query - the CSS selector
+         * @returns {boolean} the result
          */
         is(query){
             return this.every(elm => elm.matches(query));
@@ -73,6 +76,7 @@ if (window.$H) {
         
         /**
          * Check if any of these elements match a query
+         * @returns {boolean} the result
          */
         isAny(query){
             return this.some(elm => elm.matches(query));
@@ -108,6 +112,8 @@ if (window.$H) {
          * Set or query attributes of these elements
          * @param {string} key - the attribute key
          * @param {any} value - the value to set, or undefined if querying
+         * @returns {string|ShorthandArray} the queried attribute or
+         * the current list of elements (to be chained)
          */
         attr(){
             if (arguments.length == 1) {
@@ -127,6 +133,7 @@ if (window.$H) {
         /**
          * Add a classes to these elements
          * @param {...string} className - the name of the class
+         * @returns {ShorthandArray} the current list of elements (to be chained)
          */
         addClass(){
             for (const className of arguments) {
@@ -138,6 +145,7 @@ if (window.$H) {
         /**
          * Remove classes from these elements
          * @param {...string} className - the name of the class
+         * @returns {ShorthandArray} the current list of elements (to be chained)
          */
         removeClass(){
             for (const className of arguments) {
@@ -150,6 +158,7 @@ if (window.$H) {
          * Toggle a class on these elements
          * @param {string} className - the class name to toggle
          * @param {boolean} state - the state to toggle into (or undefined if toggling)
+         * @returns {ShorthandArray} the current list of elements (to be chained)
          */
         toggleClass(){
             
@@ -227,6 +236,7 @@ if (window.$H) {
         
         /**
          * Make these elements visible
+         * @returns {ShorthandArray} the current list of elements (to be chained)
          */
         show(){
             this.forEach(elm => {
@@ -238,6 +248,7 @@ if (window.$H) {
         
         /**
          * Make these elements invisible (display: none)
+         * @returns {ShorthandArray} the current list of elements (to be chained)
          */
         hide(){
             this.forEach(elm => {
@@ -252,6 +263,7 @@ if (window.$H) {
         /**
          * Loop through every element as a single ShorthandArray
          * @param {function} callback(ShorthandArray) - the function to call
+         * @returns {ShorthandArray} the current list of elements (to be chained)
          */
         each(callback){
             this.map(elm => new ShorthandArray([elm])).forEach(callback);
@@ -260,6 +272,7 @@ if (window.$H) {
         
         /**
          * Get the first element as a singular ShorthandArray
+         * @returns {ShorthandArray}
          */
         first(){
             return new ShorthandArray(this.length > 0 ? [this[0]] : []);
@@ -267,6 +280,7 @@ if (window.$H) {
         
         /**
          * Get the last element as a singular ShorthandArray
+         * @returns {ShorthandArray}
          */
         last(){
             return new ShorthandArray(this.length > 0 ? [this[this.length-1]] : []);
@@ -277,6 +291,7 @@ if (window.$H) {
          * @param {string} type - the event type to listen to
          * @param {string|function} - the target selector or the callback
          * @param {function} - the callback, if target selector was specified
+         * @returns {ShorthandArray} the current list of elements (to be chained)
          */
         on(){
             if (arguments.length >= 2) {
@@ -311,6 +326,7 @@ if (window.$H) {
         /**
          * Append one or more elements or strings or html code to these elements
          * @param {...string|...ShorthandArray|...Element} elements - the elements to parse and append
+         * @returns {ShorthandArray} the current list of elements (to be chained)
          */
         append(){
             
