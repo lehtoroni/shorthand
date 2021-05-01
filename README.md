@@ -12,7 +12,7 @@ The documentation is the best and only complete list of the implemented features
 If you wanted to e.g. migrate from jQuery, the documentation is your best friend.
 
 **Documentation:**
-- JSDoc: https://example.com/docs/
+- JSDoc: https://lehtoroni.github.io/shorthand/
 - You can also [see the source](./src/shorthand.js)
 
 ## Compatibility with jQuery
@@ -20,12 +20,32 @@ Shorthand is **not** a drop-in jQuery replacement.
 It uses the `$H` handle for its operations, and doesn't support all of
 jQuery's features or handle everything in the same way.
 The feature list of Shorthand is fairly short,
-but in the right hands it is surprisingly powerful. 
+but in the right hands it is surprisingly powerful.
+
+Shorthand is written in an ES6-ish fashion.
+If you need support for older browsers, some transpiling has to be done.
+I might even provide some pre-transpiled files later on.
+
+**TL;DR:** Doesn't work straight out of the box on old browsers and
+isn't a drop-in jQuery replacement. Some things work just like with
+jQuery, some don't. Please see the documentation!
+
+
+## Downloading and using $horthand
+If you want to use Shorthand in production, please see if there is anything
+on the [releases](https://github.com/lehtoroni/shorthand/releases) page.
+Releases may not be created regularly, so, if the releases page is out of date,
+you could just download the repository and use the `shorthand.js` file.
+
+For the time being, there are no modules or imports.
+The `shorthand.js` file gives you exactly what you need: the library,
+ready to be used, compatible with most (modern) browsers.
+
 
 ## A brief introduction
 
-### Element query and creation
-You can use Shorthand to query existing elements with standard CSS queries:
+### Creating and querying elements
+You can use Shorthand to query existing elements with standard CSS queries.
 ```js
 // <div id="my-div"></div>
 $H('#my-div')
@@ -37,15 +57,15 @@ $H('.my-text')
 $H('p b[data-element="1"]')
 ```
 
-You can also use Shorthand to create new elements, just like jQuery:
+You can also use Shorthand to create new elements, just like with jQuery.
 ```js
 const $parsed = $H('<div><span/><b/></div>');
 $H('#another-div').append($parsed);
 ```
 
 #### ⚠️ Caution!
-Shorthand doesn't do the kind of error correction that jQuery does.
-Shorthand is literally a bunch of shorthands: it uses raw JavaScript methods.
+Shorthand uses vanilla JS methods to parse HTML strings into document nodes.
+It does not provide any jQuery-like error correction.
 
 ### Element manipulation
 
@@ -158,3 +178,13 @@ $H(() => {
     console.log('The content has been loaded! Yay!');
 });
 ```
+
+## License
+**$horthand is licensed under the MIT license**.
+Feel free to adapt it into projects in any way you like.
+If you are a jQuery-oriented dinosaur like me, it $horthand can get handy!
+
+## Contributing
+Currently $horthand is just a small freetime project of mine.
+However, if you feel like you could give it some powerful additions that
+would fit well in its philosophy, feel free to fork it and/or contact me. 
