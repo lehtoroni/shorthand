@@ -35,11 +35,8 @@
  *   |_|                                    
  * $hortHand (c) Roni Lehto 2021
  * Licensed under the MIT license - see 'LICENSE' for details
-*/
+ */
 
-/**
- * Welcome to the documentation of $horthand.
-*/
 
 if (window.$H) {
     throw new Error('$hortHand has been already loaded');
@@ -67,14 +64,18 @@ if (window.$H) {
     class ShorthandArray extends Array {
         
         constructor(baseElements){
-            if (!(typeof baseElements[Symbol.iterator] === 'function')) baseElements = [];
-            super(...baseElements);
+            if (baseElements) {
+                if (!(typeof baseElements[Symbol.iterator] === 'function')) baseElements = [];
+                super(...baseElements);
+            } else {
+                super();
+            }
         }
         
         /**
          * Filter and return elements matching a CSS selector
          * @param {string} query - the CSS selector
-         * @returns {ShorthandArray} the found objects
+         * @returns {ShorthandArray} the found elements
          */
         find(query){
             const outArr = new ShorthandArray();
@@ -83,9 +84,21 @@ if (window.$H) {
         }
         
         /**
+         * Find the siblings of these elements
+         * @returns {ShorthandArray} the found elements
+         */
+        siblings(){
+            const outArr = new ShorthandArray();
+            this.forEach(elm => {
+                outArr.push(...[...elm.parentNode.children].filter(subElm => subElm !== elm));
+            });
+            return outArr;
+        }
+        
+        /**
          * Return the closest matching elements to these elements
          * @param {string} query - the CSS selector
-         * @returns {ShorthandArray} the closest queried objects
+         * @returns {ShorthandArray} the closest queried elements
          */
         closest(query){
             const outArr = new ShorthandArray();
@@ -154,6 +167,21 @@ if (window.$H) {
                 }
             } else {
                 throw new Error('You need to specify arguments for .attr()');
+            }
+            return this;
+        }
+        
+        /**
+         * Set or query current value of input(s)
+         * @param {any} content - the content to set
+         * @returns {any|ShorthandArray} the value of the elements if queried,
+         * or the current list of elements (to be chained)
+         */
+        val(){
+            if (arguments.length > 0) {
+                for (const elm of this) elm.value = arguments[0];
+            } else {
+                for (const elm of this) return elm.value;
             }
             return this;
         }
@@ -260,6 +288,18 @@ if (window.$H) {
                 return this;
                 
             }
+        }
+        
+        /**
+         * Get a computed style value from the first element
+         * @param {string} cssKey - the CSS key to find
+         * @returns {string|any} the computed style value
+         */
+        style(cssKey){
+            for (const elm of this) {
+                return getComputedStyle(elm)[cssKey];
+            }
+            return null;
         }
         
         /**
@@ -378,6 +418,115 @@ if (window.$H) {
             
         }
         
+        /**
+         * Prepend one or more elements to the beginning of these elements
+         * @param {...string|...ShorthandArray|...Element} elements - the elements to parse and prepend
+         * @returns {ShorthandArray} the current list of elements (to be chained)
+         */
+        prepend(){
+            
+            const toPrepend = [];
+            
+            for (const elm of arguments) {
+                if (typeof elm === 'string') {
+                    toPrepend.push(...parseHTML(elm));
+                } else if (elm instanceof ShorthandArray) {
+                    toPrepend.push(...elm);
+                } else {
+                    toPrepend.push(elm);
+                }
+            }
+            
+            toPrepend.forEach(prependElm => {
+                this.forEach(elm => elm.insertBefore(prependElm, elm.firstChild));
+            });
+            
+            return this;
+            
+        }
+        
+        /**
+         * Remove the current elements
+         * @returns {ShorthandArray} the current list of elements (to be chained)
+         */
+        remove(){
+            for (const elm of this) {
+                elm.parentNode.removeChild(elm);
+            }
+            return this;
+        }
+        
+        /**
+         * Replace the current elements with other content
+         * @returns {ShorthandArray} the current list of elements (to be chained)
+         */
+        replaceWith(content){
+            
+            if (content instanceof HTMLElement || content instanceof Node)
+                content = $H(content);
+            
+            if (content instanceof ShorthandArray) 
+                content = $H('&lt;div/>').append(content).html();
+            
+            for (const elm of this) {
+                elm.outerHTML = content;
+            }
+            
+            return this;
+            
+        }
+        
+        /**
+         * Get the computed width of the first element
+         * @returns {float} the width (as pixels)
+         */
+        width(){
+            for (const elm of this) {
+                return parseFloat(getComputedStyle(elm, null).width.replace('px', ''));
+            }
+            return null;
+        }
+        
+        /**
+         * Get the computed height of the first element
+         * @returns {float} the height (as pixels)
+         */
+        height(){
+            for (const elm of this) {
+                return parseFloat(getComputedStyle(elm, null).height.replace('px', ''));
+            }
+            return null;
+        }
+        
+        /**
+         * Get the offset of the first element (top and left) as pixels
+         * @returns {object} the object containing 'top' and 'left'
+         */
+        offset(){
+            for (const elm of this) {
+                const r = elm.getBoundingClientRect();
+                return {
+                    top: r.top + document.body.scrollTop,
+                    left: r.left + document.body.scrollLeft
+                };
+            }
+            return null;
+        }
+        
+        /**
+         * Get the position of the element on the page
+         * @returns {object} the object containing 'top' and 'left'
+         */
+        position(){
+            for (const elm of this) {
+                return {
+                    top: elm.offsetTop,
+                    left: elm.offsetLeft
+                };
+            }
+            return null;
+        }
+        
     }
     
     /**
@@ -412,6 +561,8 @@ if (window.$H) {
                 
             } else if (typeof args[0] === 'function') {
                 document.addEventListener('DOMContentLoaded', args[0]);
+            } else {
+                return new ShorthandArray(args);
             }
             
         }
@@ -437,7 +588,7 @@ if (window.$H) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat May 01 2021 15:43:56 GMT+0300 (Eastern European Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sat May 01 2021 16:51:52 GMT+0300 (Eastern European Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

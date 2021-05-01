@@ -30,6 +30,10 @@ Shorthand is written in an ES6-ish fashion.
 If you need support for older browsers, some transpiling has to be done.
 I might even provide some pre-transpiled files later on.
 
+Currently, Shorthand doesn't support jQuery's "next", "previous" etc. functions.
+If a value is being queried and the ShorthandArray contains multiple elements,
+the value will be returned from the first one.
+
 **TL;DR:** Doesn't work straight out of the box on old browsers and
 isn't a drop-in jQuery replacement. Some things work just like with
 jQuery, some don't. Please see the documentation!
