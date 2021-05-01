@@ -6,4 +6,6 @@ $H(()=>{
     
     const $td = $H('.test-div');
     
+    const $p = $H('<p/>').text('hello world').appendTo($H('body'));
+    
 });

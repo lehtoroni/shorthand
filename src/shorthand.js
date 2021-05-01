@@ -36,12 +36,14 @@ if (window.$H) {
     class ShorthandArray extends Array {
         
         constructor(baseElements){
+            
             if (baseElements) {
                 if (!(typeof baseElements[Symbol.iterator] === 'function')) baseElements = [];
                 super(...baseElements);
             } else {
                 super();
             }
+            
         }
         
         /**
@@ -51,7 +53,13 @@ if (window.$H) {
          */
         find(query){
             const outArr = new ShorthandArray();
-            this.forEach(elm => outArr.push(...elm.querySelectorAll(query)));
+            this.forEach(elm => {
+                if (elm.matches(query)) {
+                    outArr.push(elm);
+                } else {
+                    outArr.push(...elm.querySelectorAll(query))
+                }
+            });
             return outArr;
         }
         
@@ -78,6 +86,26 @@ if (window.$H) {
             return outArr;
         }
         
+        /**
+         * Return the children of these elements
+         * @returns {ShorthandArray} the children
+         */
+        children(){
+            const outArr = new ShorthandArray();
+            this.forEach(elm => outArr.push(...elm.children));
+            return outArr;
+        }
+        
+        /**
+         * Return the parent(s) of these elements
+         * @returns {ShorthandArray} the parent(s)
+         */
+        parent(){
+            const outArr = new ShorthandArray();
+            this.forEach(elm => outArr.push(elm.parentNode));
+            return outArr;
+        }
+                
         /**
          * Check if all of these elements match a query
          * @param {string} query - the CSS selector
@@ -383,11 +411,24 @@ if (window.$H) {
             }
             
             toAppend.forEach(appendElm => {
-                this.forEach(elm => elm.appendChild(appendElm));
+                this.forEach(elm => {
+                    console.log(elm);
+                    elm.appendChild(appendElm);
+                });
             });
             
             return this;
             
+        }
+        
+        /**
+         * Append these elements to some other element
+         * @param {Element|ShorthandArray|Node} another - the other element to append these into
+         * @returns {ShorthandArray} the current list of elements (to be chained)
+         */
+        appendTo(another){
+            this.forEach(elm => $H(another).append(elm));
+            return this;
         }
         
         /**
@@ -449,6 +490,14 @@ if (window.$H) {
         }
         
         /**
+         * Clone all elements
+         * @returns {ShorthandArray} the cloned elements
+         */
+        clone(){
+            return new ShorthandArray(...this.map(elm => elm.cloneNode()));
+        }
+        
+        /**
          * Get the computed width of the first element
          * @returns {float} the width (as pixels)
          */
@@ -499,6 +548,57 @@ if (window.$H) {
             return null;
         }
         
+        
+        /**
+         * Collect any values from inputs to an object
+         * !!! DOES NOT SUPPORT FILES YET !!!
+         * @returns {object} the collected values
+         */
+        collectForm(){
+            
+            const dataOut = {};
+            
+            this.find('[name]').each(($el) => {
+                
+                const inputName = $el.attr('name');
+                
+                if ($el.is('input')) {
+                    switch ($el.attr('type')) {
+                        
+                        case 'text':
+                        case 'email':
+                        case 'search':
+                            dataOut[inputName] = $el.val();
+                            break;
+                        
+                        case 'number':
+                        case 'range':
+                            dataOut[inputName] = parseFloat($el.val());
+                            break;
+                        
+                        case 'checkbox':
+                            dataOut[inputName] = $el.is(':checked');
+                            break;
+                        
+                        case 'radio':
+                            dataOut[inputName] = $el.closest('form, [data-form], .form').find(`input[name="${$el.attr('name')}"]:checked`).attr('value');
+                            break;
+                        
+                        default:
+                            dataOut[inputName] = $el.val();
+                            break;
+                        
+                    }
+                } else if ($el.is('textarea') || $el.is('select')) {
+                    dataOut[inputName] = $el.val();
+                }
+                
+            });
+            
+            return dataOut;
+            
+        }
+        
     }
     
     /**
@@ -534,7 +634,7 @@ if (window.$H) {
             } else if (typeof args[0] === 'function') {
                 document.addEventListener('DOMContentLoaded', args[0]);
             } else {
-                return new ShorthandArray(args);
+                return new ShorthandArray(...args);
             }
             
         }
